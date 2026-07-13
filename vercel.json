@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "api/[...all].js": {
+      "maxDuration": 60,
+      "memory": 1536,
+      "includeFiles": "node_modules/@sparticuz/chromium/bin/**"
+    }
+  }
+}

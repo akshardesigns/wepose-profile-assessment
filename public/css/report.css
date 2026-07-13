@@ -1,0 +1,176 @@
+
+:root{
+  --navy:#0C3D4F;
+  --navy-2:#072D3F;
+  --orange:#F0742E;
+  --orange-2:#D9631F;
+  --slate:#527582;
+  --ink:#20302f;
+  --line:#E7ECEC;
+  --green-fill:#AFD0C0;
+  --green-text:#1F5A41;
+  --peach-fill:#FFF0E9;
+  --peach-text:#C85A22;
+  --blue-fill:#DCE8F0;
+  --blue-text:#0C3D4F;
+  --red-fill:#F5D9D4;
+  --red-text:#A8402E;
+  --page-w:210mm;
+  --page-h:297mm;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:#EEF2F3;font-family:'Poppins',sans-serif;color:var(--ink);}
+
+/* ---------- PREVIEW ---------- */
+.preview-panel{overflow-y:auto;max-height:100vh;padding:34px 0 80px;}
+.preview-scale-note{max-width:var(--page-w);margin:0 auto 18px;text-align:center;font-size:12px;color:#8b9aa0;}
+.page{
+  width:var(--page-w);height:var(--page-h);
+  background:#fff;margin:0 auto 26px;position:relative;
+  box-shadow:0 8px 30px rgba(12,61,79,.16);
+  overflow:hidden;
+}
+.page-inner{position:absolute;top:0;left:0;right:0;bottom:0;padding:16mm 14mm 14mm;transform-origin:top left;}
+
+/* ===== COVER PAGE ===== */
+.cover .logo{position:absolute;top:14mm;left:14mm;width:34mm;z-index:2;}
+.cover .spiral{position:absolute;top:-120mm;right:-95mm;width:210mm;height:215mm;z-index:1;}
+.cover .eyebrow{margin-top:32mm;color:var(--slate);letter-spacing:3px;font-family:'Poppins';font-weight:500;font-size:19.5pt;position:relative;z-index:2;}
+.cover .title{font-family:'Poppins';font-weight:800;font-size:71.4pt;line-height:1.0;color:var(--navy);margin-top:3mm;position:relative;z-index:2;}
+.cover .title .accent{color:var(--orange);display:block;}
+.cover .sub{margin-top:6mm;color:#3c5666;font-family:'Poppins';font-weight:400;font-size:12.9pt;line-height:1.55;max-width:145mm;position:relative;z-index:2;}
+.info-card{margin-top:4mm;border:1.6px solid var(--orange);border-radius:6mm;padding:7mm 8mm;position:relative;}
+.info-card .passport-tag{position:absolute;top:7mm;right:8mm;text-align:right;font-size:7.5pt;color:var(--slate);line-height:1.5;}
+.info-card .passport-tag b{color:var(--navy);font-size:8.5pt;}
+.id-row{display:flex;align-items:center;gap:5mm;}
+.avatar{width:19mm;height:19mm;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.avatar img{width:100%;height:100%;object-fit:cover;}
+.avatar svg{width:55%;height:55%;}
+.id-meta .name{font-family:'Poppins';font-weight:800;font-size:19pt;color:var(--navy);line-height:1.1;}
+.id-meta .age{color:var(--slate);font-size:9.5pt;margin-top:2mm;padding-bottom:3mm;border-bottom:1px solid #f0ece7;width:100%;}
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;margin-top:6mm;padding-top:5mm;border-top:1px solid #f1eee9;}
+.info-item{position:relative;padding-left:4mm;}
+.info-item:first-child{padding-left:0;}
+.info-item:not(:first-child)::before{content:'';position:absolute;left:0;top:1mm;bottom:1mm;width:1px;background:#e6e1da;}
+.info-item .lbl{color:var(--navy);opacity:.75;display:flex;gap:2mm;align-items:center;margin-bottom:1.5mm;font-size:8pt;font-weight:700;}
+.info-item .lbl svg{width:11px;height:11px;flex-shrink:0;}
+.info-item .val{font-weight:800;color:var(--navy);font-size:9.5pt;word-break:break-word;}
+.date-box{margin-top:6mm;font-size:9pt;}
+.date-box label{font-weight:800;color:var(--navy);display:block;margin-bottom:1.5mm;font-size:9pt;}
+.date-field{
+  display:inline-flex;
+  align-items:center;
+  width:fit-content;
+  max-width:100%;
+  border:1px solid #dfe4e6;
+  border-radius:2.5mm;
+  padding:2.5mm 3.5mm;
+  color:var(--navy);
+  font-size:9pt;
+  font-weight:800;
+  background:#fff;
+  white-space:nowrap;
+}
+.date-field.no-border{border:none;padding:1mm 0 0;}
+.date-field .lbl2{font-weight:700;color:#8a97a0;margin-right:2.5mm;font-size:8pt;}
+.masa-note{font-size:7.5pt;color:#93a1a6;margin-top:2mm;font-style:italic;}
+.date-row{
+    display:flex;
+    flex-direction:column;
+    gap:3mm;
+    align-items:flex-start;
+    margin-top:6mm;
+}
+
+.date-box{
+    margin-top:0;
+}
+.cover .elephant{position:absolute;bottom:8mm;right:4mm;width:54mm;height:64mm;z-index:9;pointer-events:none;}
+.cover .footer-note{position:absolute;bottom:11mm;left:14mm;right:62mm;border-top:1.2px solid var(--orange);padding-top:3mm;font-family:'Poppins';font-size:7.6pt;color:var(--slate);line-height:1.45;z-index:2;}
+
+/* ===== DIMENSION / KESIMPULAN PAGES ===== */
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6mm;}
+.eyebrow-sm{color:var(--slate);letter-spacing:2px;font-weight:800;font-size:8.5pt;}
+.passport-chip{border:1px solid #e2e6e8;border-radius:3mm;padding:2.5mm 4.5mm;display:flex;gap:2.5mm;align-items:center;font-size:7.5pt;color:var(--slate);}
+.passport-chip svg{width:14px;height:14px;flex-shrink:0;color:var(--navy);}
+.passport-chip b{display:block;color:var(--navy);font-size:9pt;}
+.section-title-row{display:flex;align-items:center;gap:3.5mm;border:1px solid #eef1f2;border-radius:8mm;padding:3.5mm 6mm;box-shadow:0 2px 12px rgba(12,61,79,.06);margin-bottom:6mm;}
+.roman-pill{background:var(--orange);color:#fff;font-family:'Poppins';font-weight:800;width:8.5mm;height:8.5mm;min-width:8.5mm;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5pt;}
+.section-title-row h2{font-family:'Poppins';color:var(--navy);font-size:13.5pt;font-weight:700;margin:0;}
+
+.box{border-radius:5mm;padding:5.5mm 6.5mm;margin-bottom:4.2mm;}
+.box-temuan{background:#fff;border:1px solid #e7ecec;box-shadow:0 2px 14px rgba(12,61,79,.05);}
+.box-kekuatan{background:var(--green-fill);}
+.box-kelemahan{background:var(--peach-fill);}
+.box-dimata{background:var(--blue-fill);min-height:22mm;}
+.box-red{background:var(--red-fill);}
+.box h3{font-family:'Poppins';font-weight:800;font-size:10pt;margin:0 0 2.5mm;letter-spacing:.5px;}
+.box-temuan h3{color:var(--navy);}
+.box-kekuatan h3{color:var(--green-text);}
+.box-kelemahan h3{color:var(--peach-text);}
+.box-dimata h3{color:var(--blue-text);}
+.box-red h3{color:var(--red-text);}
+.box p{font-size:9pt;line-height:1.55;text-align:justify;color:#20302f;margin:0;}
+.box ul{list-style:none;padding:0;margin:0;}
+.box ul li.main{position:relative;padding-left:4mm;margin-bottom:1.8mm;font-size:9pt;line-height:1.5;text-align:justify;color:#20302f;}
+.box ul li.main::before{content:'•';position:absolute;left:0;font-weight:800;}
+.box ul li.sub{padding-left:8mm;margin-bottom:1.2mm;font-size:8.5pt;line-height:1.45;color:#20302f;text-align:justify;}
+
+.dim-closing{font-size:9.5pt;line-height:1.6;color:#2a3c3c;text-align:justify;border-radius:5mm;padding:5.5mm 6.5mm;margin-top:0;margin-bottom:4.2mm;background:#fff;border:1px solid #e7ecec;box-shadow:0 2px 14px rgba(12,61,79,.05);}
+
+.page-footer{position:absolute;bottom:9mm;left:14mm;right:14mm;border-top:1.2px solid var(--orange);padding-top:3mm;display:flex;justify-content:space-between;font-size:8.5pt;color:var(--navy);font-weight:800;}
+
+/* Kesimpulan extras */
+.stat-row{display:flex;gap:5mm;margin-bottom:6mm;}
+.stat-card{flex:1;border:1px solid var(--line);border-radius:5mm;padding:5mm 6mm;}
+.stat-card .lbl{font-size:8pt;font-weight:800;color:#7c8c92;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2mm;}
+.stat-card .val{font-family:'Poppins';font-size:17pt;font-weight:800;color:var(--navy);}
+.badge{display:inline-block;padding:1.5mm 4mm;border-radius:20mm;font-size:9pt;font-weight:800;font-family:'Poppins';}
+.badge-rendah{background:var(--green-fill);color:var(--green-text);}
+.badge-sedang{background:var(--peach-fill);color:var(--peach-text);}
+.badge-tinggi{background:var(--red-fill);color:var(--red-text);}
+
+/* ---------- AUTO-FIT TIERS ----------
+   Dipakai JS (autofitAll di report.js) kalau isi 1 halaman dimensi
+   kepanjangan. Diterapkan bertahap (fit-1 -> fit-2 -> fit-3): font
+   & padding box mengecil sedikit demi sedikit dulu (tetap terbaca),
+   baru kalau MASIH kepanjangan setelah tier-3, seluruh halaman
+   di-scale sebagai jalan terakhir supaya dijamin tetap 1 halaman. */
+.page-inner.fit-1 .box{padding:4.2mm 5.5mm;margin-bottom:3.2mm;}
+.page-inner.fit-1 .box h3{font-size:9pt;margin-bottom:2mm;}
+.page-inner.fit-1 .box p,.page-inner.fit-1 .box ul li.main{font-size:8.3pt;line-height:1.42;}
+.page-inner.fit-1 .box ul li.sub{font-size:7.8pt;line-height:1.35;}
+.page-inner.fit-1 .dim-closing{font-size:8.7pt;padding:4.2mm 5.5mm;}
+.page-inner.fit-1 .section-title-row{margin-bottom:4.5mm;padding:2.8mm 5mm;}
+
+.page-inner.fit-2 .box{padding:3.4mm 4.6mm;margin-bottom:2.4mm;}
+.page-inner.fit-2 .box h3{font-size:8.3pt;margin-bottom:1.6mm;}
+.page-inner.fit-2 .box p,.page-inner.fit-2 .box ul li.main{font-size:7.6pt;line-height:1.32;}
+.page-inner.fit-2 .box ul li.sub{font-size:7.2pt;line-height:1.28;}
+.page-inner.fit-2 .dim-closing{font-size:8pt;padding:3.4mm 4.6mm;}
+.page-inner.fit-2 .section-title-row{margin-bottom:3.5mm;padding:2.2mm 4mm;}
+.page-inner.fit-2 .page-head{margin-bottom:4mm;}
+
+.page-inner.fit-3 .box{padding:2.8mm 3.8mm;margin-bottom:1.8mm;}
+.page-inner.fit-3 .box h3{font-size:7.6pt;margin-bottom:1.2mm;}
+.page-inner.fit-3 .box p,.page-inner.fit-3 .box ul li.main{font-size:7pt;line-height:1.25;}
+.page-inner.fit-3 .box ul li.sub{font-size:6.6pt;line-height:1.2;}
+.page-inner.fit-3 .dim-closing{font-size:7.4pt;padding:2.8mm 3.8mm;}
+.page-inner.fit-3 .section-title-row{margin-bottom:2.8mm;padding:1.8mm 3.5mm;}
+.page-inner.fit-3 .page-head{margin-bottom:3mm;}
+
+/* ---------- ICONS ---------- */
+.icon{stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ---------- SVG placeholder for empty photo ---------- */
+
+/* ---------- PRINT ---------- */
+@media print{
+  body{background:#fff;}
+  .app{display:block;}
+  .form-panel,.preview-scale-note{display:none !important;}
+  .preview-panel{padding:0;overflow:visible;max-height:none;}
+  .page{box-shadow:none;margin:0;page-break-after:always;}
+  .page:last-child{page-break-after:auto;}
+  @page{size:A4;margin:0;}
+}

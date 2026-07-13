@@ -1,0 +1,4 @@
+name: projects/pa-report-502206/policies/iam.disableServiceAccountKeyCreation
+spec:
+  rules:
+  - enforce: false

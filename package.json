@@ -1,0 +1,25 @@
+{
+  "name": "wepose-profile-assessment",
+  "version": "1.0.0",
+  "description": "WEPOSE Profile Assessment Report builder — form + live preview, Google Sheets backend, riwayat, dan cetak PDF server-side (Puppeteer) supaya hasil PDF identik dengan preview.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@sparticuz/chromium": "^131.0.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "google-auth-library": "^9.14.1",
+    "googleapis": "^140.0.1",
+    "puppeteer-core": "^23.5.0"
+  },
+  "devDependencies": {
+    "puppeteer": "^23.5.0"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}

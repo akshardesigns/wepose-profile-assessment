@@ -1,0 +1,5 @@
+node_modules/
+.env
+credentials/service-account.json
+*.log
+.blackboxcli/

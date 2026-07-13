@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEPOSE — Profile Assessment Report Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/report.css">
+<style>
+  /* ---- tambahan kecil khusus index.html: status bar & riwayat ---- */
+  .status-bar{display:flex;align-items:center;gap:8px;padding:0 22px 14px;font-size:12px;color:#7c8c92;}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:#c8d0d2;flex-shrink:0;}
+  .status-dot.dirty{background:var(--orange);}
+  .status-dot.saved{background:#3f9d6f;}
+  .toast{position:fixed;bottom:22px;left:22px;background:var(--navy);color:#fff;padding:11px 16px;border-radius:8px;font-size:12.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:999;opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateY(0);}
+  .toast.error{background:#B23B2E;}
+
+  .history-list{padding:4px 22px 18px;display:flex;flex-direction:column;gap:8px;}
+  .history-empty{font-size:12.5px;color:#9aa7ac;padding:6px 0 12px;}
+  .history-item{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px;}
+  .history-item .hname{font-weight:800;color:var(--navy);font-size:13px;}
+  .history-item .hmeta{color:#7c8c92;margin-top:2px;}
+  .history-item .hbadge{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:800;}
+  .history-item .hactions{display:flex;gap:6px;margin-top:8px;}
+  .history-item .hactions button{flex:1;border:none;border-radius:6px;padding:6px 8px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Poppins';}
+  .hbtn-load{background:var(--navy);color:#fff;}
+  .hbtn-del{background:#f6e6e3;color:#B23B2E;}
+  .hbadge-rendah{background:var(--green-fill);color:var(--green-text);}
+  .hbadge-sedang{background:var(--peach-fill);color:var(--peach-text);}
+  .hbadge-tinggi{background:var(--red-fill);color:var(--red-text);}
+  .refresh-row{display:flex;justify-content:space-between;align-items:center;padding:0 22px 8px;}
+  .refresh-row button{background:none;border:none;color:var(--orange);font-family:'Poppins';font-weight:700;font-size:12px;cursor:pointer;}
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid #dfe6e8;border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  @media print{ .toast{display:none !important;} }
+
+  /* ---- kontrol ukuran preview ---- */
+  .zoom-bar{
+    display:flex;align-items:center;justify-content:center;gap:4px;
+    max-width:var(--page-w);margin:0 auto 14px;
+    background:#fff;border:1px solid var(--line);border-radius:999px;
+    padding:6px 8px;width:fit-content;box-shadow:0 2px 10px rgba(12,61,79,.06);
+  }
+  .zoom-bar button{
+    border:none;background:#f1f4f5;color:var(--navy);width:26px;height:26px;
+    border-radius:50%;font-family:'Poppins';font-weight:800;font-size:14px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;
+  }
+  .zoom-bar button:hover{background:#e5eaeb;}
+  .zoom-bar button:active{transform:scale(.93);}
+  .zoom-bar .zoom-value{
+    font-family:'Poppins';font-weight:700;font-size:12px;color:var(--navy);
+    width:44px;text-align:center;user-select:none;
+  }
+  .zoom-bar .zoom-fit{
+    border-radius:999px;width:auto;padding:0 10px;font-size:11px;margin-left:4px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ FORM PANEL ============ -->
+  <div class="form-panel">
+    <div class="form-header">
+      <div class="brand"><span class="dot"></span><h1>WEPOSE Profile Builder</h1></div>
+      <p>Isi data di bawah, preview laporan otomatis update di sisi kanan.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn btn-primary" id="btnPdf" onclick="cetakPDF()">🖨️ Cetak / Unduh PDF</button>
+      <button class="btn btn-ghost" id="btnSave" onclick="simpanRiwayat()">💾 Simpan</button>
+      <button class="btn btn-ghost" onclick="mulaiBaru()">🆕 Baru</button>
+      <button class="btn btn-ghost" onclick="fillSample()">Isi Contoh</button>
+      <button class="btn btn-ghost" onclick="resetForm()">Reset</button>
+    </div>
+    <div class="status-bar"><span class="status-dot" id="statusDot"></span><span id="statusText">Belum disimpan</span></div>
+
+    <div class="accordion">
+
+      <!-- RIWAYAT -->
+      <details class="section" id="riwayatSection">
+        <summary><span><span class="num">↻</span>Riwayat Tersimpan</span><span class="chev">▶</span></summary>
+        <div class="refresh-row">
+          <span style="font-size:11.5px;color:#9aa7ac;">Data dari Google Sheets</span>
+          <button onclick="muatRiwayat()">🔄 Refresh</button>
+        </div>
+        <div class="history-list" id="historyList">
+          <div class="history-empty">Memuat riwayat...</div>
+        </div>
+      </details>
+
+      <!-- COVER -->
+      <details class="section" open>
+        <summary><span><span class="num">1</span>Data Pemohon (Cover)</span><span class="chev">▶</span></summary>
+        <div class="section-body">
+          <div class="field">
+            <label>Nama Pemohon</label>
+            <input type="text" id="c_nama" oninput="render()" placeholder="Nama lengkap sesuai paspor">
+          </div>
+          <div class="field photo-upload">
+            <div class="photo-preview" id="photoPreviewWrap">
+              <svg class="icon" viewBox="0 0 24 24" style="width:55%;height:55%;color:#fff;stroke-width:2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <label class="file-btn">Upload Foto
+              <input type="file" accept="image/*" id="c_foto" onchange="handlePhoto(event)">
+            </label>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Umur</label><input type="text" id="c_umur" oninput="render()" placeholder="cth. 38 tahun"></div>
+            <div class="field"><label>Nomor Paspor</label><input type="text" id="c_paspor" oninput="render()" placeholder="cth. E7503067"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Negara Tujuan</label><input type="text" id="c_negara" oninput="render()" placeholder="cth. Prancis"></div>
+            <div class="field"><label>Jenis Visa</label><input type="text" id="c_visa" oninput="render()" placeholder="cth. Schengen C"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Tujuan Perjalanan</label><input type="text" id="c_tujuan" oninput="render()" placeholder="cth. Wisata"></div>
+            <div class="field"><label>Sponsor</label><input type="text" id="c_sponsor" oninput="render()" placeholder="cth. Biaya Sendiri"></div>
+          </div>
+          <div class="field">
+            <label>Tanggal Penilaian</label>
+            <input type="date" id="c_tanggal" oninput="render()">
+            <div class="hint">Masa berlaku otomatis dihitung +3 bulan dari tanggal ini.</div>
+          </div>
+        </div>
+      </details>
+
+      <!-- DIMENSI 1 -->
+      <details class="section">
+        <summary><span><span class="num">2</span>Dimensi I — Dokumen Pekerjaan</span><span class="chev">▶</span></summary>
+        <div class="section-body">
+          <div class="field"><label>Temuan</label><textarea id="d1_temuan" oninput="render()" placeholder="Ringkasan temuan mengenai pekerjaan pemohon..."></textarea></div>
+          <div class="field"><label>Kekuatan</label><textarea id="d1_kekuatan" oninput="render()" placeholder="1 poin per baris"></textarea><div class="hint">Satu poin per baris. Baris berupa "1. teks" akan tampil sebagai sub-list bernomor.</div></div>
+          <div class="field"><label>Kelemahan</label><textarea id="d1_kelemahan" oninput="render()" placeholder="1 poin per baris"></textarea></div>
+          <div class="field"><label>Dimata Kedutaan</label><textarea id="d1_dimata" oninput="render()" placeholder="Bagaimana petugas visa akan memandang profil ini..."></textarea></div>
+          <div class="field"><label>Catatan Penutup</label><textarea id="d1_catatan" oninput="render()" placeholder="Kalimat penutup singkat untuk halaman ini"></textarea></div>
+        </div>
+      </details>
+
+      <!-- DIMENSI 2 -->
+      <details class="section">
+        <summary><span><span class="num">3</span>Dimensi II — Stabilitas Finansial</span><span class="chev">▶</span></summary>
+        <div class="section-body">
+          <div class="field"><label>Temuan</label><textarea id="d2_temuan" oninput="render()"></textarea></div>
+          <div class="field"><label>Kekuatan</label><textarea id="d2_kekuatan" oninput="render()"></textarea></div>
+          <div class="field"><label>Kelemahan</label><textarea id="d2_kelemahan" oninput="render()"></textarea></div>
+          <div class="field"><label>Dimata Kedutaan</label><textarea id="d2_dimata" oninput="render()"></textarea></div>
+          <div class="field"><label>Catatan Penutup</label><textarea id="d2_catatan" oninput="render()"></textarea></div>
+        </div>
+      </details>
+
+      <!-- DIMENSI 3 -->
+      <details class="section">
+        <summary><span><span class="num">4</span>Dimensi III — History Perjalanan</span><span class="chev">▶</span></summary>
+        <div class="section-body">
+          <div class="field"><label>Temuan</label><textarea id="d3_temuan" oninput="render()"></textarea></div>
+          <div class="field"><label>Kekuatan</label><textarea id="d3_kekuatan" oninput="render()"></textarea></div>
+          <div class="field"><label>Kelemahan</label><textarea id="d3_kelemahan" oninput="render()"></textarea></div>
+          <div class="field"><label>Dimata Kedutaan</label><textarea id="d3_dimata" oninput="render()"></textarea></div>
+          <div class="field"><label>Catatan Penutup</label><textarea id="d3_catatan" oninput="render()"></textarea></div>
+        </div>
+      </details>
+
+      <!-- DIMENSI 4 -->
+      <details class="section">
+        <summary><span><span class="num">5</span>Dimensi IV — Hubungan / Ties</span><span class="chev">▶</span></summary>
+        <div class="section-body">
+          <div class="field"><label>Temuan</label><textarea id="d4_temuan" oninput="render()"></textarea></div>
+          <div class="field"><label>Kekuatan</label><textarea id="d4_kekuatan" oninput="render()"></textarea></div>
+          <div class="field"><label>Kelemahan</label><textarea id="d4_kelemahan" oninput="render()"></textarea></div>
+          <div class="field"><label>Dimata Kedutaan</label><textarea id="d4_dimata" oninput="render()"></textarea></div>
+          <div class="field"><label>Catatan Penutup</label><textarea id="d4_catatan" oninput="render()"></textarea></div>
+        </div>
+      </details>
+
+      <!-- KESIMPULAN -->
+      <details class="section">
+        <summary><span><span class="num">6</span>Kesimpulan</span><span class="chev">▶</span></summary>
+        <div class="section-body">
+          <div class="field-row">
+            <div class="field"><label>Skor Keseluruhan</label><input type="text" id="k_skor" oninput="render()" placeholder="cth. 78/100"></div>
+            <div class="field"><label>Tingkat Risiko</label>
+              <select id="k_risiko" oninput="render()">
+                <option value="Rendah">Rendah</option>
+                <option value="Sedang" selected>Sedang</option>
+                <option value="Tinggi">Tinggi</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Ringkasan Umum</label><textarea id="k_ringkasan" oninput="render()" placeholder="Ringkasan menyeluruh atas profil pemohon..."></textarea></div>
+          <div class="field"><label>Rekomendasi Tindakan</label><textarea id="k_rekomendasi" oninput="render()" placeholder="1 poin per baris"></textarea></div>
+          <div class="field"><label>Catatan Penutup</label><textarea id="k_catatan" oninput="render()" placeholder="Disclaimer / catatan akhir"></textarea></div>
+        </div>
+      </details>
+
+    </div>
+  </div>
+
+  <!-- ============ PREVIEW PANEL ============ -->
+  <div class="preview-panel">
+    <div class="preview-scale-note">Preview — 6 halaman A4. Preview ini di-generate oleh mesin render yang sama persis dengan file PDF yang diunduh.</div>
+    <div class="zoom-bar">
+      <button type="button" onclick="zoomOut()" title="Perkecil">−</button>
+      <span class="zoom-value" id="zoomValue">100%</span>
+      <button type="button" onclick="zoomIn()" title="Perbesar">+</button>
+      <button type="button" class="zoom-fit" onclick="zoomFit()" title="Sesuaikan lebar">Sesuaikan</button>
+      <button type="button" class="zoom-fit" onclick="zoomReset()" title="Ukuran asli">100%</button>
+    </div>
+    <div id="pagesZoomWrap">
+      <div id="pages"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/js/report.js"></script>
+<script src="/js/app-client.js"></script>
+</body>
+</html>
